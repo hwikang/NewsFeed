@@ -41,6 +41,7 @@ final class NewsRepository {
     
     private func deleteAllNewsCoreData() {
         let fetchRequestResult: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "NewsItem")
+
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequestResult)
         do {
             try viewContext?.execute(deleteRequest)
@@ -71,7 +72,8 @@ final class NewsRepository {
     }
     
     private func readNewsCoreData() -> [News] {
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "NewsItem")
+        let fetchRequest: NSFetchRequest<NewsItem> = NewsItem.fetchRequest()
+
         do {
             guard let result = try viewContext?.fetch(fetchRequest) else { return [] }
             let news: [News] = result.compactMap { news in

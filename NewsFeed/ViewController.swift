@@ -9,13 +9,14 @@ import UIKit
 import Combine
 import SnapKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UICollectionViewDelegate {
     private let viewModel: ViewModel
     private var cancellables = Set<AnyCancellable>()
-    private var dataSource: UICollectionViewDiffableDataSource<Section,Item>?
+    private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.register(NewsCollectionViewCell.self, forCellWithReuseIdentifier: NewsCollectionViewCell.id)
+        collectionView.delegate = self
         return collectionView
     }()
     
@@ -28,7 +29,9 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         setUI()
         bindViewModel()
+        viewModel.getNews()
     }
+    
     private func setUI() {
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
@@ -41,8 +44,7 @@ class ViewController: UIViewController {
         let output = viewModel.transform()
         output.news.receive(on: DispatchQueue.main)
             .sink { [weak self] news in
-                //TODO: 콜렉션뷰 구현
-                print("NEWS \(news)")
+               
                 var snapshot = NSDiffableDataSourceSnapshot<Section,Item>()
                let items = news.map { Item.news($0) }
                 let section = Section.list
@@ -80,7 +82,6 @@ class ViewController: UIViewController {
 
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        print("UIDevice.current.orientation \(UIDevice.current.orientation)")
         coordinator.animate { [weak self] context in
             guard let self = self else { return }
             self.collectionView.collectionViewLayout = self.createLayout()
@@ -92,7 +93,20 @@ class ViewController: UIViewController {
             (collectionView: UICollectionView, indexPath: IndexPath, item: Item) -> UICollectionViewCell? in
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewsCollectionViewCell.id, for: indexPath) as? NewsCollectionViewCell
+            if case let .news(newsItem) = item {
+                cell?.apply(imageURL: newsItem.urlToImage, title: newsItem.title, publishedAt: newsItem.publishedAt)
+            }
+           
             return cell
+        }
+
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if case let .news(newsItem) = dataSource?.itemIdentifier(for: indexPath) {
+            
+            let webViewController = WebViewController(titleString: newsItem.title, urlString: newsItem.url)
+            navigationController?.pushViewController(webViewController, animated: true)
         }
 
     }
@@ -105,8 +119,8 @@ class ViewController: UIViewController {
 
 fileprivate enum Section {
     case list
-    case grid
 }
+
 fileprivate enum Item: Hashable {
     case news(News)
 }

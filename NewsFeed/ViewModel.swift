@@ -12,7 +12,6 @@ final class ViewModel {
     private let repository: NewsRepository
     init(repository: NewsRepository) {
         self.repository = repository
-        getNews()
     }
    
     private let news = PassthroughSubject<[News],Never>()
