@@ -10,19 +10,41 @@ import Combine
 
 final class ViewModel {
     private let repository: NewsRepository
+    private let news = PassthroughSubject<[News],Never>()
+    private let visitedNewsIndex = CurrentValueSubject<Set<Int>,Never>([])
+
+    private var cancellables = Set<AnyCancellable>()
+    struct CellData {
+        let news: News
+        let selected: Bool
+    }
+    struct Input {
+        let selectedIndex: AnyPublisher<Int,Never>
+    }
+    struct Output {
+        let cellDataList: AnyPublisher<[CellData],Never>
+    }
+    
     init(repository: NewsRepository) {
         self.repository = repository
     }
    
-    private let news = PassthroughSubject<[News],Never>()
-    private let visitedNewsIndex = PassthroughSubject<[Int],Never>()
-
-    struct Output {
-        let news: AnyPublisher<[News],Never>
-    }
-    
-    public func transform() -> Output {
-        return Output(news: news.eraseToAnyPublisher())
+    public func transform(input: Input) -> Output {
+        input.selectedIndex.sink { [weak self] index in
+            guard let self = self else { return }
+            visitedNewsIndex.value.insert(index)
+            visitedNewsIndex.send(visitedNewsIndex.value)
+        } .store(in: &cancellables)
+        
+        let cellDataList = news.combineLatest(visitedNewsIndex).map { news, visitedNewsIndex in
+            let cellDataList = news.enumerated().map { index, newsItem in
+                let isVisited = visitedNewsIndex.contains(index)
+                return CellData(news: newsItem, selected: isVisited)
+            }
+            return cellDataList
+        }.eraseToAnyPublisher()
+        
+        return Output(cellDataList: cellDataList)
     }
     
     public func getNews() {

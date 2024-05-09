@@ -13,6 +13,8 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     private let viewModel: ViewModel
     private var cancellables = Set<AnyCancellable>()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
+    private let selectedIndex = PassthroughSubject<Int, Never>()
+    
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.register(NewsCollectionViewCell.self, forCellWithReuseIdentifier: NewsCollectionViewCell.id)
@@ -41,16 +43,17 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     }
     
     private func bindViewModel() {
-        let output = viewModel.transform()
-        output.news.receive(on: DispatchQueue.main)
-            .sink { [weak self] news in
-               
+        let input = ViewModel.Input(selectedIndex: selectedIndex.eraseToAnyPublisher())
+        let output = viewModel.transform(input: input)
+        
+        output.cellDataList.receive(on: DispatchQueue.main)
+            .sink { [weak self] cellDataList in
                 var snapshot = NSDiffableDataSourceSnapshot<Section,Item>()
-               let items = news.map { Item.news($0) }
+                let items = cellDataList.map { Item.news(news: $0.news, isSelected: $0.selected) }
                 let section = Section.list
-               snapshot.appendSections([section])
-               snapshot.appendItems(items, toSection: section)
-               self?.dataSource?.apply(snapshot)
+                snapshot.appendSections([section])
+                snapshot.appendItems(items, toSection: section)
+                self?.dataSource?.apply(snapshot)
             }
             .store(in: &cancellables)
     }
@@ -79,7 +82,7 @@ class ViewController: UIViewController, UICollectionViewDelegate {
             }
         }
     }
-
+    
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         coordinator.animate { [weak self] context in
@@ -93,28 +96,30 @@ class ViewController: UIViewController, UICollectionViewDelegate {
             (collectionView: UICollectionView, indexPath: IndexPath, item: Item) -> UICollectionViewCell? in
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewsCollectionViewCell.id, for: indexPath) as? NewsCollectionViewCell
-            if case let .news(newsItem) = item {
-                cell?.apply(imageURL: newsItem.urlToImage, title: newsItem.title, publishedAt: newsItem.publishedAt)
+            if case let .news(newsItem, isSelected) = item {
+                cell?.apply(imageURL: newsItem.urlToImage, title: newsItem.title, publishedAt: newsItem.publishedAt, isSelected: isSelected)
             }
-           
+            
             return cell
         }
-
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if case let .news(newsItem) = dataSource?.itemIdentifier(for: indexPath) {
+        if case let .news(newsItem, _) = dataSource?.itemIdentifier(for: indexPath) {
             
             let webViewController = WebViewController(titleString: newsItem.title, urlString: newsItem.url)
             navigationController?.pushViewController(webViewController, animated: true)
+            
+            selectedIndex.send(indexPath.item)
         }
-
+        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
 }
 
 fileprivate enum Section {
@@ -122,5 +127,5 @@ fileprivate enum Section {
 }
 
 fileprivate enum Item: Hashable {
-    case news(News)
+    case news(news: News, isSelected: Bool)
 }

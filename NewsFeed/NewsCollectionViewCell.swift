@@ -47,9 +47,11 @@ final class NewsCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    public func apply(imageURL: String?, title: String, publishedAt: Date?) {
+    public func apply(imageURL: String?, title: String, publishedAt: Date?, isSelected: Bool) {
         if let imageURL = imageURL {
             imageView.setImage(imageURLSring: imageURL)
+        } else {
+            imageView.image = nil
         }
         titleLabel.text = title
     
@@ -57,8 +59,14 @@ final class NewsCollectionViewCell: UICollectionViewCell {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
             publishedAtLabel.text = dateFormatter.string(from: publishedAt)
+        } else {
+            publishedAtLabel.text = nil
         }
-       
+        if isSelected {
+            titleLabel.textColor = .red
+        } else {
+            titleLabel.textColor = .black
+        }
     }
     
     required init?(coder: NSCoder) {
