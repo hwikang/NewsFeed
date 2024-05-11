@@ -10,7 +10,8 @@ import Combine
 
 final class ViewModel {
     private let repository: NewsRepository
-    private let news = PassthroughSubject<[News],Never>()
+    private let news = PassthroughSubject<[News],Never>() 
+    private let error = PassthroughSubject<Error,Never>()
     private let visitedNewsIndex = CurrentValueSubject<Set<Int>,Never>([])
 
     private var cancellables = Set<AnyCancellable>()
@@ -23,6 +24,7 @@ final class ViewModel {
     }
     struct Output {
         let cellDataList: AnyPublisher<[CellData],Never>
+        let error: AnyPublisher<Error,Never>
     }
     
     init(repository: NewsRepository) {
@@ -44,7 +46,7 @@ final class ViewModel {
             return cellDataList
         }.eraseToAnyPublisher()
         
-        return Output(cellDataList: cellDataList)
+        return Output(cellDataList: cellDataList, error: error.eraseToAnyPublisher())
     }
     
     public func getNews() {
@@ -55,7 +57,7 @@ final class ViewModel {
             case .success(let news):
                 self.news.send(news)
             case .failure(let error):
-                print("error \(error)")
+                self.error.send(error)
             }
         }
     }

@@ -35,6 +35,7 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     }
     
     private func setUI() {
+        title = "News"
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -56,6 +57,13 @@ class ViewController: UIViewController, UICollectionViewDelegate {
                 self?.dataSource?.apply(snapshot)
             }
             .store(in: &cancellables)
+        
+        output.error.receive(on: DispatchQueue.main)
+            .sink { [weak self] error in
+                let alert = UIAlertController(title: "에러", message: "뉴스 불러오기에 실패 하였습니다.\n\(error.localizedDescription)", preferredStyle: .alert)
+                self?.present(alert, animated: true)
+            }.store(in: &cancellables)
+
     }
     
     private func createLayout() -> UICollectionViewLayout {
@@ -113,7 +121,6 @@ class ViewController: UIViewController, UICollectionViewDelegate {
             
             selectedIndex.send(indexPath.item)
         }
-        
     }
     
     required init?(coder: NSCoder) {

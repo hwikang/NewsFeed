@@ -11,11 +11,11 @@ import UIKit
 
 final class NewsRepository {
     private let viewContext: NSManagedObjectContext?
-    private let network = NewsNetwork()
+    private let network: NewsNetwork
 
-    init(viewContext: NSManagedObjectContext?) {
+    init(viewContext: NSManagedObjectContext?, network: NewsNetwork) {
         self.viewContext = viewContext
-     
+        self.network = network
     }
     
     public func getNews() async -> Result<[News], Error> {
@@ -64,7 +64,6 @@ final class NewsRepository {
             newsObject.setValue(newsItem.url, forKey: "url")
         }
         do {
-            print("save news \(news.count)")
             try viewContext.save()
         } catch let error {
             print("saveNewsCoreData Error - \(error)")
@@ -84,7 +83,6 @@ final class NewsRepository {
             let urlToImage = news.value(forKey: "urlToImage") as? String
                 return News(title: title, url: url, urlToImage: urlToImage, publishedAt: publishedAt)
             }
-            print("read news \(news.count) ")
             return news
         } catch let error {
             print("readNewsCoreData Error - \(error)")

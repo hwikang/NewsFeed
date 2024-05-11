@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2F6A0356C02D9D74BDEF642D /* Pods_NewsFeed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC2899977205973A610CBFE1 /* Pods_NewsFeed.framework */; };
+		F8347E242BEF2C5B004D9FEF /* NewsNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8347E232BEF2C5B004D9FEF /* NewsNetwork.swift */; };
 		F843FA1D2BEA38F30030AB87 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F843FA1C2BEA38F30030AB87 /* AppDelegate.swift */; };
 		F843FA1F2BEA38F30030AB87 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F843FA1E2BEA38F30030AB87 /* SceneDelegate.swift */; };
 		F843FA212BEA38F30030AB87 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F843FA202BEA38F30030AB87 /* ViewController.swift */; };
@@ -39,6 +40,7 @@
 		B4170EBC8ED06A2661CD8A79 /* Pods-NewsFeed.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NewsFeed.debug.xcconfig"; path = "Target Support Files/Pods-NewsFeed/Pods-NewsFeed.debug.xcconfig"; sourceTree = "<group>"; };
 		C0DDF25CBC90DD01591E1754 /* Pods-NewsFeed.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NewsFeed.release.xcconfig"; path = "Target Support Files/Pods-NewsFeed/Pods-NewsFeed.release.xcconfig"; sourceTree = "<group>"; };
 		CC2899977205973A610CBFE1 /* Pods_NewsFeed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NewsFeed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8347E232BEF2C5B004D9FEF /* NewsNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsNetwork.swift; sourceTree = "<group>"; };
 		F843FA192BEA38F30030AB87 /* NewsFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NewsFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F843FA1C2BEA38F30030AB87 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F843FA1E2BEA38F30030AB87 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -76,6 +78,49 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		F8347E252BEF4F17004D9FEF /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				F8347E282BEF4F3B004D9FEF /* Webview */,
+				F8347E262BEF4F22004D9FEF /* Main */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		F8347E262BEF4F22004D9FEF /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				F8AC08222BEB20D300B451FB /* NewsCollectionViewCell.swift */,
+				F843FA202BEA38F30030AB87 /* ViewController.swift */,
+				F843FA692BEA785A0030AB87 /* ViewModel.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		F8347E282BEF4F3B004D9FEF /* Webview */ = {
+			isa = PBXGroup;
+			children = (
+				F8AC0C842BECE21E00B451FB /* WebViewController.swift */,
+			);
+			path = Webview;
+			sourceTree = "<group>";
+		};
+		F8347E292BEF4F44004D9FEF /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				F8AC0C822BECCD2100B451FB /* Extension + UIImageView.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		F8347E2A2BEF4F6C004D9FEF /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				F843FA672BEA6C4E0030AB87 /* NewsRepository.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
 		F843FA102BEA38F30030AB87 = {
 			isa = PBXGroup;
 			children = (
@@ -99,12 +144,9 @@
 			children = (
 				F843FA1C2BEA38F30030AB87 /* AppDelegate.swift */,
 				F843FA1E2BEA38F30030AB87 /* SceneDelegate.swift */,
-				F843FA202BEA38F30030AB87 /* ViewController.swift */,
-				F8AC0C842BECE21E00B451FB /* WebViewController.swift */,
-				F843FA672BEA6C4E0030AB87 /* NewsRepository.swift */,
-				F8AC08222BEB20D300B451FB /* NewsCollectionViewCell.swift */,
-				F8AC0C822BECCD2100B451FB /* Extension + UIImageView.swift */,
-				F843FA692BEA785A0030AB87 /* ViewModel.swift */,
+				F8347E2A2BEF4F6C004D9FEF /* Repository */,
+				F8347E292BEF4F44004D9FEF /* Extension */,
+				F8347E252BEF4F17004D9FEF /* Presentation */,
 				F843FA662BEA6C3D0030AB87 /* Network */,
 				F843FA632BEA46160030AB87 /* Entity */,
 				F843FA282BEA38F40030AB87 /* Assets.xcassets */,
@@ -126,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				F843FA612BEA3BD50030AB87 /* Network.swift */,
+				F8347E232BEF2C5B004D9FEF /* NewsNetwork.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -255,6 +298,7 @@
 				F843FA652BEA461D0030AB87 /* News.swift in Sources */,
 				F8AC0C852BECE21E00B451FB /* WebViewController.swift in Sources */,
 				F843FA622BEA3BD50030AB87 /* Network.swift in Sources */,
+				F8347E242BEF2C5B004D9FEF /* NewsNetwork.swift in Sources */,
 				F843FA682BEA6C4E0030AB87 /* NewsRepository.swift in Sources */,
 				F843FA212BEA38F30030AB87 /* ViewController.swift in Sources */,
 				F8AC0C832BECCD2100B451FB /* Extension + UIImageView.swift in Sources */,

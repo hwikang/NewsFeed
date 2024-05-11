@@ -44,7 +44,7 @@ extension UIImageView {
         guard let viewContext = appDelegate?.persistentContainer.viewContext,
               let entity = NSEntityDescription.entity(forEntityName: "Image", in: viewContext) else { return }
         
-        let imageData = image.pngData()
+        let imageData = image.jpegData(compressionQuality: 0.5)
         let imageObject = NSManagedObject(entity: entity, insertInto: viewContext)
         imageObject.setValue(imageData, forKey: "imageData")
         imageObject.setValue(imageURLSring, forKey: "imageURL")

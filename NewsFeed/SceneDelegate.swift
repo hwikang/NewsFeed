@@ -21,13 +21,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         let viewContext = appDelegate?.persistentContainer.viewContext
 
-        let repository = NewsRepository(viewContext: viewContext)
+        let repository = NewsRepository(viewContext: viewContext, network: NewsNetwork())
         let viewModel = ViewModel(repository: repository)
         let viewController = ViewController(viewModel: viewModel)
         let rootVC = UINavigationController(rootViewController: viewController)
         window?.backgroundColor = .white
         window?.rootViewController = rootVC
-
         window?.makeKeyAndVisible()
 
     }

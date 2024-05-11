@@ -9,10 +9,17 @@ import UIKit
 
 final class NewsCollectionViewCell: UICollectionViewCell {
     static let id = "NewsCollectionViewCell"
-    private let imageView = UIImageView()
+    private let imageView = {
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 4
+        imageView.clipsToBounds = true
+        imageView.layer.borderWidth = 0.5
+        imageView.layer.borderColor = UIColor.systemGray.cgColor
+        return imageView
+    }()
     private let titleLabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
         label.numberOfLines = 2
         return label
     }()
@@ -22,11 +29,6 @@ final class NewsCollectionViewCell: UICollectionViewCell {
         label.textAlignment = .right
         return label
     }()
-    
-    public override func prepareForReuse() {
-        super.prepareForReuse()
-        imageView.image = nil
-    }
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -48,24 +50,35 @@ final class NewsCollectionViewCell: UICollectionViewCell {
     }
     
     public func apply(imageURL: String?, title: String, publishedAt: Date?, isSelected: Bool) {
-        if let imageURL = imageURL {
+        setImage(imageURL: imageURL)
+        publishedAtLabel(publishedAt: publishedAt)
+        setTitleLabel(title: title, isSelected: isSelected)
+    }
+    
+    private func setImage(imageURL: String?) {
+        if let imageURL = imageURL, !imageURL.isEmpty {
             imageView.setImage(imageURLSring: imageURL)
         } else {
             imageView.image = nil
         }
-        titleLabel.text = title
+    }
     
+    private func setTitleLabel(title: String, isSelected: Bool) {
+        titleLabel.text = title
+        if isSelected {
+            titleLabel.textColor = .red
+        } else {
+            titleLabel.textColor = .label
+        }
+    }
+    
+    private func publishedAtLabel(publishedAt: Date?) {
         if let publishedAt = publishedAt {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
             publishedAtLabel.text = dateFormatter.string(from: publishedAt)
         } else {
             publishedAtLabel.text = nil
-        }
-        if isSelected {
-            titleLabel.textColor = .red
-        } else {
-            titleLabel.textColor = .black
         }
     }
     
